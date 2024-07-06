@@ -18,10 +18,6 @@ class CustomerModel(BaseModel):
     password:str
     accounts: Optional[List[str]] = []
 
-class UpdateCustomerModel(BaseModel):
-    firstName: Optional[str]
-    lastName: Optional[str]
-    address: Optional[AddressModel]
-    phoneNumber: Optional[str]
-    email: Optional[EmailStr]
-    accounts: Optional[List[str]]
+class LogInModel(BaseModel):
+    user: str
+    password: str

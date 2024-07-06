@@ -1,5 +1,5 @@
-from database import customer_collection
-from models import CustomerModel
+from .database import customer_collection
+from .models import CustomerModel
 from bson import ObjectId
 
 async def add_customer(customer_data: CustomerModel) -> dict:
@@ -18,3 +18,4 @@ async def add_customer(customer_data: CustomerModel) -> dict:
         new_customer['_id'] = str(new_customer['_id'])
 
     return new_customer
+

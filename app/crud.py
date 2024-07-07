@@ -1,5 +1,6 @@
 from .database import customer_collection
 from .models import CustomerModel
+from .models import LogInModel
 from bson import ObjectId
 
 async def add_customer(customer_data: CustomerModel) -> dict:
@@ -19,3 +20,11 @@ async def add_customer(customer_data: CustomerModel) -> dict:
 
     return new_customer
 
+
+async def checkData(customer_data: CustomerModel) -> bool:
+    query = {
+        "email": customer_data.email,
+        "password": customer_data.password
+    }
+    exists = await customer_collection.find_one(query)
+    return exists is not None

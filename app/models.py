@@ -19,5 +19,5 @@ class CustomerModel(BaseModel):
     accounts: Optional[List[str]] = []
 
 class LogInModel(BaseModel):
-    user: str
+    email: EmailStr
     password: str

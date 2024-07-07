@@ -27,5 +27,4 @@ async def checkData(customer_data: CustomerModel) -> bool:
         "password": customer_data.password
     }
     exists = await customer_collection.find_one(query)
-    print(exists)
     return exists is not None

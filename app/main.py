@@ -28,7 +28,6 @@ async def create_customer(customer: CustomerModel):
 
 @app.post("/log_in", response_model=dict)
 async def logIn (Credentials: LogInModel):
-    print(Credentials)
     authenticate = await checkData(Credentials)
     response_data = {"authenticated": authenticate}
 

@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .models import CustomerModel, LogInModel
 from .crud import add_customer
+from .crud import checkData
 from fastapi.encoders import jsonable_encoder
 
 
@@ -28,7 +29,8 @@ async def create_customer(customer: CustomerModel):
 @app.post("/log_in", response_model=dict)
 async def logIn (Credentials: LogInModel):
     print(Credentials)
-    response_data = {"authenticated": False}
+    authenticate = await checkData(Credentials)
+    response_data = {"authenticated": authenticate}
 
     # Convierte el diccionario en JSON serializable
     response_json = jsonable_encoder(response_data)

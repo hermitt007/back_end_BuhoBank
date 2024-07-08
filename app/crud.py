@@ -2,10 +2,14 @@ from .database import customer_collection
 from .models import CustomerModel
 from .models import LogInModel
 from bson import ObjectId
+import bcrypt
 
 async def add_customer(customer_data: CustomerModel) -> dict:
-    # Convertir el modelo a un diccionario serializable
+    # Hashear la contraseña antes de almacenarla
+    hashed_password = bcrypt.hashpw(customer_data.password.encode('utf-8'), bcrypt.gensalt())
+   # Convertir el modelo a un diccionario serializable
     customer_dict = customer_data.dict(by_alias=True)
+    customer_dict['password'] = hashed_password.decode('utf-8')  # Almacenar la contraseña hasheada
 
     # Insertar el cliente en la base de datos y obtener el ID insertado
     result = await customer_collection.insert_one(customer_dict)

@@ -6,6 +6,8 @@
 # Ignore __pycache__ inside app directory
 /app/__pycache__/
 app/__pycache__/
+
+app/__pycache__/
 __pycache__/
 /__pycache__/
 gut

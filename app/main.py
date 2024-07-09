@@ -26,7 +26,7 @@ async def create_customer(customer: CustomerModel):
         
     return JSONResponse(status_code=201, content=new_customer)
 
-@app.post("/log_in", response_model=dict)
+@app.post("/login", response_model=dict)
 async def logIn (Credentials: LogInModel):
     authenticate = await checkData(Credentials)
     response_data = {"authenticated": authenticate}

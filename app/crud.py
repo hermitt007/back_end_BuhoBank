@@ -25,10 +25,20 @@ async def add_customer(customer_data: CustomerModel) -> dict:
     return new_customer
 
 
-async def checkData(customer_data: CustomerModel) -> bool:
+async def checkData(credentials: LogInModel) -> bool:
     query = {
-        "email": customer_data.email,
-        "password": customer_data.password
+        "user": credentials.user
     }
-    exists = await customer_collection.find_one(query)
-    return exists is not None
+    user = await customer_collection.find_one(query)
+    if user is None:
+        print(f"Usuario {credentials.user} no encontrado")
+        return False
+    else:
+        print(f"Usuario {credentials.user} encontrado con exito")
+    
+    hashed_password=user.get('password','')
+    if bcrypt.checkpw(credentials.password.encode('utf-8'), hashed_password.encode('utf-8')):
+        return True
+    else:
+        return False
+    

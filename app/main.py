@@ -5,6 +5,7 @@ from .models import CustomerModel, LogInModel
 from .crud import add_customer
 from .crud import checkData
 from fastapi.encoders import jsonable_encoder
+from .verifyData import verifyDataCI
 
 
 app = FastAPI()
@@ -20,11 +21,17 @@ app.add_middleware(
 
 @app.post("/register_user", response_description="Add new customer", response_model=CustomerModel)
 async def create_customer(customer: CustomerModel):
-    new_customer = await add_customer(customer)
-    if new_customer:
-        new_customer = jsonable_encoder(new_customer)
+    ci=await verifyDataCI(customer)
+    if ci:
+        response=jsonable_encoder({"code":"CI_REPEAT"})
+        return JSONResponse(status_code=201, content=response)
+    else:
+        new_customer = await add_customer(customer)
+        if new_customer:
+            response=jsonable_encoder({"code":"USER_CREATE"})
+            return JSONResponse(status_code=201, content=response)
+            
         
-    return JSONResponse(status_code=201, content=new_customer)
 
 @app.post("/login", response_model=dict)
 async def logIn (Credentials: LogInModel):

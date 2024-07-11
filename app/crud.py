@@ -10,7 +10,6 @@ async def add_customer(customer_data: CustomerModel) -> dict:
    # Convertir el modelo a un diccionario serializable
     customer_dict = customer_data.dict(by_alias=True)
     customer_dict['password'] = hashed_password.decode('utf-8')  # Almacenar la contraseña hasheada
-
     # Insertar el cliente en la base de datos y obtener el ID insertado
     result = await customer_collection.insert_one(customer_dict)
     inserted_id = result.inserted_id
@@ -21,6 +20,8 @@ async def add_customer(customer_data: CustomerModel) -> dict:
     # Convertir el _id de ObjectId a str
     if new_customer:
         new_customer['_id'] = str(new_customer['_id'])
+        
+    type(new_customer)
 
     return new_customer
 

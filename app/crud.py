@@ -9,7 +9,8 @@ async def add_customer(customer_data: CustomerModel) -> dict:
     hashed_password = bcrypt.hashpw(customer_data.password.encode('utf-8'), bcrypt.gensalt())
    # Convertir el modelo a un diccionario serializable
     customer_dict = customer_data.dict(by_alias=True)
-    customer_dict['password'] = hashed_password.decode('utf-8')  # Almacenar la contraseña hasheada
+
+    customer_dict['password'] = hashed_password.decode('utf-8')  
     # Insertar el cliente en la base de datos y obtener el ID insertado
     result = await customer_collection.insert_one(customer_dict)
     inserted_id = result.inserted_id
@@ -24,6 +25,28 @@ async def add_customer(customer_data: CustomerModel) -> dict:
     type(new_customer)
 
     return new_customer
+
+
+async def update_customer(credentials: CustomerModel) -> dict:
+    # Hashear la nueva contraseña antes de almacenarla
+    hashed_password = bcrypt.hashpw(credentials.password.encode('utf-8'), bcrypt.gensalt())
+
+    # Crear el diccionario con los campos a actualizar
+    update_data = {
+        "user": credentials.user,
+        "password": hashed_password.decode('utf-8')
+    }
+
+    result = await customer_collection.update_one(
+        {"ci": credentials.ci},
+        {"$set": update_data}
+    )
+
+    if result.modified_count > 0:
+       return True
+    else:
+        return False
+
 
 
 async def checkData(credentials: LogInModel) -> bool:

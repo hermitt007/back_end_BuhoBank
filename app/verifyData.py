@@ -6,8 +6,15 @@ async def verifyDataCI(customer_data: CustomerModel) -> dict:
         "ci": customer_data.ci
     }
     user_data= await customer_collection.find_one(query)
-    return user_data is None
-       
+    print("en verugudataCI  \n",type(user_data))
+    print(user_data)
+    
+    if user_data is None:
+        return False,False
+    else:
+        credentials=verifyCredentias(user_data)
+        return True,credentials
+
 
 #para el nombre de usuario repetido
 async def verifyDataUser(customer_data: CustomerModel) -> bool:
@@ -15,7 +22,10 @@ async def verifyDataUser(customer_data: CustomerModel) -> bool:
         "user": customer_data.user
     }
     user_data = await customer_collection.find_one(query)
-    return user_data is not None
+    if user_data is None:
+        return False
+    else:
+        return True
 
 
 
@@ -25,4 +35,20 @@ async def verifyDataEmail(customer_data: CustomerModel) -> bool:
         "email": customer_data.email
     }
     user_data = await customer_collection.find_one(query)
-    return user_data is not None
+    if user_data is None:
+        return False
+    else:
+        return True
+    
+    
+def verifyCredentias(user_data):
+    user=user_data['user']
+    print("el dicc: ",user)
+    if user_data['user']:
+        print(user_data['user'])
+        return True
+    else:
+        print("El usuario no tiene  creada las credenciales")
+        return False
+    
+

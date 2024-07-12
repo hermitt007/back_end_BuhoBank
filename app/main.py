@@ -55,14 +55,26 @@ async def create_customer(customer: CustomerModel):
 
 @app.post("/login", response_model=dict)
 async def logIn (Credentials: LogInModel):
-    authenticate = await checkData(Credentials)
-    response_data = {"authenticated": authenticate}
+    authenticate,bank_accounts = await checkData(Credentials)
+    if authenticate:
+        if len(bank_accounts)>0:
+            response_data = {
+                "authenticated": authenticate,
+                "code":"HAVE_ACCOUNTS",
+                "accounts_list":bank_accounts
+            }
+          
+        else:
+           
+            response_data = {
+            "authenticated": authenticate,
+            "code":"NO_HAVE_ACCOUNTS"
+            }
+        # Convierte el diccionario en JSON serializable
+        response_json = jsonable_encoder(response_data)
 
-    # Convierte el diccionario en JSON serializable
-    response_json = jsonable_encoder(response_data)
-
-    # Devuelve la respuesta como JSONResponse
-    return JSONResponse(status_code=201, content=response_json)
+        # Devuelve la respuesta como JSONResponse
+        return JSONResponse(status_code=201, content=response_json)
 
 #Funcion para cambiar la contraseña
 @app.post("/change_password", response_model=dict)

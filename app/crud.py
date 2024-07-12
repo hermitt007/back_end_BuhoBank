@@ -12,7 +12,7 @@ async def add_customer(customer_data: CustomerModel) -> dict:
     customer_dict = customer_data.dict(by_alias=True)
     customer_dict['password'] = hashed_password.decode('utf-8')  
     del customer_dict['pass_conf']
-    customer_dict['uentas_bancarias'] = []
+    customer_dict['accounts'] = []
     try:
         result = await customer_collection.insert_one(customer_dict)
         
@@ -61,7 +61,7 @@ async def checkData(credentials: LogInModel) -> bool:
     
     hashed_password=user.get('password','')
     if bcrypt.checkpw(credentials.password.encode('utf-8'), hashed_password.encode('utf-8')):
-        return True
+        return True,user['accounts']
     else:
         return False
     

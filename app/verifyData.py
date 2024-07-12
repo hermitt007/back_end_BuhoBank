@@ -1,6 +1,6 @@
 from .database import customer_collection
 from .models import CustomerModel
-
+import re
 async def verifyDataCI(customer_data: CustomerModel) -> dict:
     query = {
         "ci": customer_data.ci
@@ -50,5 +50,22 @@ def verifyCredentias(user_data):
     else:
         print("El usuario no tiene  creada las credenciales")
         return False
+    
+#Requisitos para el cambio de contraseña nueva.
+def verify_password_requirements(password: str) -> bool:
+    # Requisitos mínimos: al menos 8 caracteres, una letra mayúscula, una letra minúscula, un dígito y un carácter especial
+    if len(password) < 8:
+        return False, "La contraseña debe tener al menos 8 caracteres"
+    if not re.search(r"[A-Z]", password):
+        return False, "La contraseña debe tener al menos una letra mayúscula"
+    if not re.search(r"[a-z]", password):
+        return False, "La contraseña debe tener al menos una letra minúscula"
+    if not re.search(r"\d", password):
+        return False, "La contraseña debe tener al menos un dígito"
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False, "La contraseña debe tener al menos un carácter especial"
+    return True, ""
+    
+
     
 

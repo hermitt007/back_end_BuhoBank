@@ -1,6 +1,7 @@
 from .database import customer_collection
 from .models import CustomerModel
 from .models import LogInModel
+from .models import UpdatePass
 from bson import ObjectId
 import bcrypt
 
@@ -65,22 +66,22 @@ async def checkData(credentials: LogInModel) -> bool:
         return False
     
 #función para verificar que la nueva contraseña cumple con los requisitos mínimos
-async def update_password(user_id: str, current_password: str, new_password: str) -> dict:
+async def update_password(data: UpdatePass) -> dict:
     # Buscar el usuario por su ID
-    customer = await customer_collection.find_one({"_id": ObjectId(user_id)})
+    customer = await customer_collection.find_one({"_id": ObjectId(data.user_id)})
     if not customer:
         raise ValueError("Usuario no encontrado")
 
     # Verificar si la contraseña actual es correcta
-    if not bcrypt.checkpw(current_password.encode('utf-8'), customer['password'].encode('utf-8')):
+    if not bcrypt.checkpw(data.current_password.encode('utf-8'), customer['password'].encode('utf-8')):
         return {"error_code": "INCORRECT_CURRENT_PASSWORD"}
 
     # Hashear la nueva contraseña antes de almacenarla
-    hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+    hashed_password = bcrypt.hashpw(data.new_password.encode('utf-8'), bcrypt.gensalt())
     
     # Actualizar la contraseña en la base de datos
     await customer_collection.update_one(
-        {"_id": ObjectId(user_id)},
+        {"_id": ObjectId(data.user_id)},
         {"$set": {"password": hashed_password.decode('utf-8')}}
     )
     

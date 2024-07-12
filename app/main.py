@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from .models import CustomerModel, LogInModel
+from .models import CustomerModel, LogInModel,UpdatePass
 from .crud import add_customer,update_customer,checkData, update_password
 from fastapi.encoders import jsonable_encoder
 from .verifyData import verifyDataCI, verifyDataEmail,verifyDataUser, verify_password_requirements
@@ -66,14 +66,14 @@ async def logIn (Credentials: LogInModel):
 
 #Funcion para cambiar la contraseña
 @app.post("/change_password", response_model=dict)
-async def change_password(user_id: str, current_password: str, new_password: str):
+async def change_password(new_data:UpdatePass):
     # Verificar que la nueva contraseña cumpla con los requisitos mínimos
-    is_valid, message = verify_password_requirements(new_password)
+    is_valid, message = verify_password_requirements(new_data.new_password)
     if not is_valid:
         return JSONResponse(status_code=400, content={"message": message, "error_code": "INVALID_NEW_PASSWORD"})
 
     try:
-        result = await update_password(user_id, current_password, new_password)
+        result = await update_password(new_data)
         if "error_code" in result:
             if result["error_code"] == "INCORRECT_CURRENT_PASSWORD":
                 return JSONResponse(status_code=400, content={"message": "La contraseña actual es incorrecta", "error_code": "INCORRECT_CURRENT_PASSWORD"})

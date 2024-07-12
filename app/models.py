@@ -23,3 +23,8 @@ class CustomerModel(BaseModel):
 class LogInModel(BaseModel):
     user: str
     password: str
+    
+class UpdatePass(BaseModel):
+    user_id:str
+    current_password:str
+    new_password:str

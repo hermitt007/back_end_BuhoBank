@@ -64,3 +64,24 @@ async def checkData(credentials: LogInModel) -> bool:
     else:
         return False
     
+#función para verificar que la nueva contraseña cumple con los requisitos mínimos
+async def update_password(user_id: str, current_password: str, new_password: str) -> dict:
+    # Buscar el usuario por su ID
+    customer = await customer_collection.find_one({"_id": ObjectId(user_id)})
+    if not customer:
+        raise ValueError("Usuario no encontrado")
+
+    # Verificar si la contraseña actual es correcta
+    if not bcrypt.checkpw(current_password.encode('utf-8'), customer['password'].encode('utf-8')):
+        return {"error_code": "INCORRECT_CURRENT_PASSWORD"}
+
+    # Hashear la nueva contraseña antes de almacenarla
+    hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+    
+    # Actualizar la contraseña en la base de datos
+    await customer_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"password": hashed_password.decode('utf-8')}}
+    )
+    
+    return {"message": "Contraseña cambiada exitosamente"}

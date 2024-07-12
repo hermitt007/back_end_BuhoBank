@@ -23,6 +23,7 @@ app.add_middleware(
 async def create_customer(customer: CustomerModel):
     ci,credentials=await verifyDataCI(customer)
     if ci:
+        print("entro a actualizar")
         if credentials:
             response=jsonable_encoder({"code":"CI_REPEAT"})
             return JSONResponse(status_code=201, content=response)
@@ -36,6 +37,7 @@ async def create_customer(customer: CustomerModel):
                     response=jsonable_encoder({"code":"USER_CREATE"})
                     return JSONResponse(status_code=201, content=response)
     else:
+        print("entro a agregar nuevo")
         if await verifyDataUser(customer):
             response = jsonable_encoder({"code": "USER_REPEAT"})
             return JSONResponse(status_code=201, content=response)

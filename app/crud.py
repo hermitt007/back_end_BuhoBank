@@ -9,22 +9,20 @@ async def add_customer(customer_data: CustomerModel) -> dict:
     hashed_password = bcrypt.hashpw(customer_data.password.encode('utf-8'), bcrypt.gensalt())
    # Convertir el modelo a un diccionario serializable
     customer_dict = customer_data.dict(by_alias=True)
-
     customer_dict['password'] = hashed_password.decode('utf-8')  
-    # Insertar el cliente en la base de datos y obtener el ID insertado
-    result = await customer_collection.insert_one(customer_dict)
-    inserted_id = result.inserted_id
-
-    # Buscar el cliente recién insertado
-    new_customer = await customer_collection.find_one({"_id": inserted_id})
-
-    # Convertir el _id de ObjectId a str
-    if new_customer:
-        new_customer['_id'] = str(new_customer['_id'])
+    del customer_dict['pass_conf']
+    customer_dict['uentas_bancarias'] = []
+    try:
+        result = await customer_collection.insert_one(customer_dict)
         
-    type(new_customer)
-
-    return new_customer
+        # Verificar si la inserción fue exitosa
+        if result.inserted_id:
+            return True
+        else:
+            return False
+    except Exception as e:
+            print(f"Error al insertar el cliente: {e}")
+            return False
 
 
 async def update_customer(credentials: CustomerModel) -> dict:
